@@ -33,6 +33,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 #define CHECK_RESULT(_c)                                                                           \
   do {                                                                                             \
@@ -891,7 +892,9 @@ inline WasmResult getResponseTrailerSize(size_t *size) {
 
 // Buffer
 inline WasmDataPtr getBufferBytes(WasmBufferType type, size_t start, size_t length) {
-  const char *ptr = nullptr;
+  std::string test = "fake";
+  std::cout << "test: " << test << std::endl;
+  const char *ptr = test.c_str();
   size_t size = 0;
   proxy_get_buffer_bytes(type, start, length, &ptr, &size);
   return std::make_unique<WasmData>(ptr, size);
@@ -1084,9 +1087,13 @@ template <> inline std::string toString(std::string t) { return t; }
 
 template <> inline std::string toString(bool t) { return t ? "true" : "false"; }
 
-template <typename T> struct StringToStringView { typedef T type; };
+template <typename T> struct StringToStringView {
+  typedef T type;
+};
 
-template <> struct StringToStringView<std::string> { typedef std::string_view type; };
+template <> struct StringToStringView<std::string> {
+  typedef std::string_view type;
+};
 
 inline uint32_t MetricBase::resolveFullName(const std::string &n) {
   auto it = metric_ids.find(n);
